@@ -236,7 +236,7 @@ class AuthStore extends Notifier<AuthState> {
         state = state.copyWith(
           status: AuthStatus.initial,
           successMessage: 'OTP sent to your phone via SMS',
-          verificationId: 'backend_session', // Dummy ID to satisfy UI logic
+          verificationId: 'backend_session',
           otp: backendResponse.otp,
         );
       } else {
