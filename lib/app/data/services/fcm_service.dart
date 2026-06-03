@@ -62,7 +62,7 @@ class FCMService {
     );
 
     // Request permission
-    //    await FCMService().requestPermission();
+    await FCMService().requestPermission();
 
     // Handle foreground messages — show as local notification
     FirebaseMessaging.onMessage.listen((message) {

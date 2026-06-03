@@ -88,6 +88,14 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Re-fetch data when the user logs in after a session expiry
+    ref.listen(auth.isAuthenticatedProvider, (prev, next) {
+      if (next == true && prev == false) {
+        ref.invalidate(mySubscriptionsProvider);
+        ref.invalidate(myOrdersProvider);
+      }
+    });
+
     final subscriptionsAsync = ref.watch(mySubscriptionsProvider);
     final ordersAsync = ref.watch(myOrdersProvider);
     final cart = CartProviderScope.of(context);
@@ -122,7 +130,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                         _buildHorizontalCalendar([]),
                       ],
                     ),
-                    error: (e, _) => _buildErrorView(e),
+                    error: (_, __) => const SizedBox.shrink(),
                   ),
                   Expanded(
                     child: subscriptionsAsync.when(

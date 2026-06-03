@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -168,12 +169,20 @@ class ApiClient {
   }
 
   ApiException _handleError(DioException e) {
-    if (e.type == DioExceptionType.connectionError ||
-        e.type == DioExceptionType.unknown) {
-      if (e.message != null && e.message!.contains('SocketException')) {
-        return const ApiException(
-            message:
-                'Server unreachable (api.shrimpbite.in). Please check your internet or try again later.');
+    // connectionError covers: no internet, DNS failure, refused connection — always user-facing
+    if (e.type == DioExceptionType.connectionError) {
+      return const ApiException(message: 'No internet connection. Please check your network and try again.');
+    }
+
+    // unknown can wrap a SocketException on some platforms
+    if (e.type == DioExceptionType.unknown) {
+      final isSocket = e.error is SocketException ||
+          (e.message != null &&
+              (e.message!.contains('SocketException') ||
+                  e.message!.contains('Failed host lookup') ||
+                  e.message!.contains('Network is unreachable')));
+      if (isSocket) {
+        return const ApiException(message: 'No internet connection. Please check your network and try again.');
       }
     }
 
@@ -201,8 +210,9 @@ class ApiClient {
       }
       return ApiException(statusCode: e.response?.statusCode, message: message);
     }
+
     AppLogger.e('API Error: ${e.message}', e, e.stackTrace);
-    return ApiException(message: e.message ?? 'Network error');
+    return const ApiException(message: 'Something went wrong. Please try again.');
   }
 
   // ── Helper static methods for token access ──────────────────────────────

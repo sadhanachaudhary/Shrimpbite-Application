@@ -245,12 +245,14 @@ class AuthStore extends Notifier<AuthState> {
         state = AuthState.unauthenticated(error: backendResponse.message);
       }
     } catch (e) {
-      state = AuthState.unauthenticated(error: e.toString());
+      state = AuthState.unauthenticated(error: _handleAuthError(e));
     }
   }
 
   String _handleAuthError(dynamic e) {
-    final msg = e.toString();
+    // Prefer the clean message from ApiException over its toString()
+    final msg = e is ApiException ? e.message : e.toString();
+
     if (msg.contains('invalid-verification-code') ||
         msg.contains('invalid OTP')) {
       return 'The OTP you entered is incorrect.';
@@ -259,7 +261,7 @@ class AuthStore extends Notifier<AuthState> {
       return 'OTP has expired. Please resend code.';
     }
 
-    // Clean up generic error prefix if present
+    // Strip Firebase/Dio error prefixes like "[firebase_auth/...]"
     return msg.replaceFirst(RegExp(r'\[.*?\] '), '');
   }
 
