@@ -21,7 +21,7 @@ class NotificationModel {
     return NotificationModel(
       id: json['_id'] ?? json['id'] ?? '',
       title: json['title'] ?? '',
-      body: json['body'] ?? '',
+      body: json['message'] ?? json['body'] ?? '',
       type: json['type'] ?? 'general',
       isRead: json['isRead'] ?? false,
       createdAt: json['createdAt'] != null 

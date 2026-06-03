@@ -26,7 +26,7 @@ class MainPage extends ConsumerStatefulWidget {
   ConsumerState<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends ConsumerState<MainPage> {
+class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver {
   final MainController _controller = MainController();
   DateTime? _lastPressedAt;
   StreamSubscription? _fcmSubscription;
@@ -42,6 +42,7 @@ class _MainPageState extends ConsumerState<MainPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _controller.addListener(() {
       if (mounted) setState(() {});
     });
@@ -73,6 +74,31 @@ class _MainPageState extends ConsumerState<MainPage> {
 
     // Join the user's personal room to receive order updates
     socket.joinUserRoom(userId);
+
+    // Join notifications room to receive communication hub broadcasts
+    socket.joinNotificationsRoom(userId);
+    socket.onNotification((data) {
+      if (!mounted) return;
+      try {
+        final map = Map<String, dynamic>.from(data as Map);
+        ref.read(notificationsProvider.notifier).addNotification(
+              NotificationModel(
+                id: map['_id']?.toString() ??
+                    'sock-${DateTime.now().millisecondsSinceEpoch}',
+                title: map['title']?.toString() ?? 'Shrimpbite',
+                body: map['message']?.toString() ?? '',
+                type: map['type']?.toString() ?? 'System',
+                isRead: false,
+                createdAt: map['createdAt'] != null
+                    ? DateTime.tryParse(map['createdAt'].toString()) ??
+                        DateTime.now()
+                    : DateTime.now(),
+              ),
+            );
+      } catch (e) {
+        debugPrint('⚠️ Failed to parse socket notification: $e');
+      }
+    });
 
     // Listen for general order status changes
     socket.onOrderUpdate((data) {
@@ -202,11 +228,20 @@ class _MainPageState extends ConsumerState<MainPage> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      FCMService.sendTokenToBackend();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     ref.read(socketServiceProvider).offOrderUpdate();
     ref.read(socketServiceProvider).offOrderDelivered();
     ref.read(socketServiceProvider).offWalletUpdate();
+    ref.read(socketServiceProvider).offNotification();
     _fcmSubscription?.cancel();
     super.dispose();
   }

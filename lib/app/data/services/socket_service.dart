@@ -154,6 +154,17 @@ class SocketService {
     debugPrint('🛵 Left rider room: rider_$riderId');
   }
 
+  /// JOIN notifications room — receives notification events from communication hub and system.
+  /// `socket.emit("join", "notifications_{userId}")`
+  void joinNotificationsRoom(String userId) {
+    _emit('join', 'notifications_$userId');
+    debugPrint('🔔 Joined notifications room: notifications_$userId');
+  }
+
+  void leaveNotificationsRoom(String userId) {
+    _emit('leave', 'notifications_$userId');
+  }
+
   /// JOIN specific order room — for real-time status during tracking.
   /// `socket.emit("join", "order_{orderId}")`
   void joinOrderRoom(String orderId) {
@@ -261,6 +272,20 @@ class SocketService {
       _socket?.off('walletUpdate', callback);
     } else {
       _socket?.off('walletUpdate');
+    }
+  }
+
+  /// `notification` — fires when a new in-app notification is broadcast.
+  /// Payload: `{ _id, title, message, type, createdAt, ... }`
+  void onNotification(void Function(dynamic) callback) {
+    _socket?.on('notification', callback);
+  }
+
+  void offNotification([void Function(dynamic)? callback]) {
+    if (callback != null) {
+      _socket?.off('notification', callback);
+    } else {
+      _socket?.off('notification');
     }
   }
 

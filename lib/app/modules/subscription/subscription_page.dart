@@ -122,7 +122,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                         _buildHorizontalCalendar([]),
                       ],
                     ),
-                    error: (e, _) => Center(child: Text('Error: $e')),
+                    error: (e, _) => _buildErrorView(e),
                   ),
                   Expanded(
                     child: subscriptionsAsync.when(
@@ -150,18 +150,69 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                         loading: () => const Center(
                             child: CircularProgressIndicator(
                                 color: Color(0xFF68B92E))),
-                        error: (e, _) =>
-                            Center(child: Text('Error loading orders: $e')),
+                        error: (e, _) => const Center(
+                            child: Text('Could not load orders.',
+                                style: TextStyle(color: Colors.grey))),
                       ),
                       loading: () => const Center(
                           child:
                               CircularProgressIndicator(color: Color(0xFF68B92E))),
-                      error: (e, _) => Center(child: Text('Error: $e')),
+                      error: (e, _) => _buildErrorView(e),
                     ),
                   ),
                 ],
               ),
             ),
+      ),
+    );
+  }
+
+  Widget _buildErrorView(Object e) {
+    final is401 = e.toString().contains('401');
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(is401 ? Icons.lock_outline : Icons.wifi_off_rounded,
+                size: 48, color: Colors.grey.shade400),
+            const SizedBox(height: 16),
+            Text(
+              is401 ? 'Session Expired' : 'Could not load data',
+              style: const TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A)),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              is401
+                  ? 'Please log in again to continue.'
+                  : 'Check your connection and pull down to retry.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+            ),
+            if (is401) ...[
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () => AuthGuard.run(context, ref, () {}),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF68B92E),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
+                    elevation: 0,
+                  ),
+                  child: const Text('Log In',
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
