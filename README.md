@@ -46,6 +46,50 @@ The codebase is structured to enforce separation of concerns, making it highly t
 - **Domain/State Layer**: Utilizes Riverpod providers to manage asynchronous state, caching, and business rules without tightly coupling to the UI.
 - **Presentation Layer (`lib/app/ui/`)**: Pure UI components that react to state changes, completely unaware of how the data is fetched or mutated.
 
+Screenshots of the app-
+
+<img width="716" height="1600" alt="image" src="https://github.com/user-attachments/assets/9b327be6-d5d4-4acb-aa3d-ee40af75e1f8" />
+
+<img width="1080" height="2412" alt="image" src="https://github.com/user-attachments/assets/b711fb33-d91f-4f5f-8e09-1ee192cc256d" />
+
+<img width="716" height="1600" alt="image" src="https://github.com/user-attachments/assets/9d20794d-0599-48d4-85ee-56f32283aebb" />
+
+<img width="716" height="1600" alt="image" src="https://github.com/user-attachments/assets/ad6e2a8b-fccf-4558-b298-d7ae294c8ae9" />
+
+
+<img width="716" height="1600" alt="image" src="https://github.com/user-attachments/assets/08d95256-6379-42f2-b473-d1c046ebcc48" />
+
+<img width="716" height="1600" alt="image" src="https://github.com/user-attachments/assets/6d5722cf-ba47-447a-9f4e-c885343c72d8" />
+
+<img width="716" height="1600" alt="image" src="https://github.com/user-attachments/assets/55669692-dee7-42c5-8bba-3f15b27945ad" />
+
+<img width="716" height="1600" alt="image" src="https://github.com/user-attachments/assets/d64d2793-b818-4e9c-adf4-e7bb16eb9df9" />
+
+
+
+<img width="716" height="1600" alt="image" src="https://github.com/user-attachments/assets/98cb8832-6a8a-45cc-8456-0220f840a694" />
+
+
+
+<img width="716" height="1600" alt="image" src="https://github.com/user-attachments/assets/020fb926-b505-4a5a-891a-727c431a04e4" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## ⚙️ Local Setup & Installation
 
 ### Prerequisites
