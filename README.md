@@ -48,7 +48,7 @@ The codebase is structured to enforce separation of concerns, making it highly t
 
 Screenshots of the app-
 
-<img width="200" height="400" alt="image" style="margin-right: 10px;src="https://github.com/user-attachments/assets/9b327be6-d5d4-4acb-aa3d-ee40af75e1f8" />
+<img width="200" height="400" alt="image" style="margin-right: 10px" src="https://github.com/user-attachments/assets/9b327be6-d5d4-4acb-aa3d-ee40af75e1f8" />
 <img width="200" height="400" alt="image" src="https://github.com/user-attachments/assets/b711fb33-d91f-4f5f-8e09-1ee192cc256d" />
 
 
